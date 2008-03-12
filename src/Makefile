@@ -3,8 +3,8 @@ CFLAGS = -Wall
 LDFLAGS =
 
 TARGETS = List RemoveBroken SymlinkProgram
-CVS_DIR = tools/Scripts/src
-CVS_FILES = $(CVS_DIR)/LinkOrExpandAll.c $(CVS_DIR)/List.c $(CVS_DIR)/List.h
+SVN_REPO  = http://svn.gobolinux.org/tools/trunk/Scripts/src
+SVN_FILES = $(SVN_REPO)/LinkOrExpandAll.c $(SVN_REPO)/List.c $(SVN_REPO)/List.h
 
 
 all: SymlinkProgram.o LinkOrExpandAll.o List.o RemoveBroken.o
@@ -19,15 +19,14 @@ clean:
 	@cd ../bin; rm -f $(TARGETS) l
 
 distclean: clean
-	@rm -Rf tools/ LinkOrExpandAll.c  List.c  List.h
+	@rm LinkOrExpandAll.c List.c List.h
 
 LinkOrExpandAll.o: LinkOrExpandAll.c
 	@GrepReplace "int main(" "int link_or_expand_all_main(" LinkOrExpandAll.c
 	$(CC) $(CFLAGS) -c LinkOrExpandAll.c -std=c99
 
 List.c LinkOrExpandAll.c:
-	@cvs -d:pserver:anonymous@cvs.savannah.nongnu.org:/sources/goboscripts co $(CVS_FILES)
-	@mv $(CVS_DIR)/*.c $(CVS_DIR)/*.h .
+	@for i in $(SVN_FILES); do svn export $$i; done
 	@rm -Rf tools/
 
 %.o: %.c
